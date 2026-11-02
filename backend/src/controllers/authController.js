@@ -1,20 +1,33 @@
-
 const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // REGISTER API
 const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        if (!name || !email || !password) {
+        // Required fields validation
+        if (!name?.trim() || !email?.trim() || !password) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required"
             });
         }
 
+        const normalizedEmail = email.trim().toLowerCase();
+
+        // Email format validation
+        if (!emailRegex.test(normalizedEmail)) {
+            return res.status(400).json({
+                success: false,
+                message: "Please enter a valid email address"
+            });
+        }
+
+        // Password validation
         if (password.length < 6) {
             return res.status(400).json({
                 success: false,
@@ -22,8 +35,7 @@ const registerUser = async (req, res) => {
             });
         }
 
-        const normalizedEmail = email.trim().toLowerCase();
-
+        // Duplicate email check
         const existingUser = await User.findOne({
             email: normalizedEmail
         });
@@ -35,10 +47,12 @@ const registerUser = async (req, res) => {
             });
         }
 
+        // Hash password
         const passwordHash = await bcrypt.hash(password, 10);
 
+        // Create user
         const user = await User.create({
-            name,
+            name: name.trim(),
             email: normalizedEmail,
             passwordHash
         });
@@ -63,12 +77,14 @@ const registerUser = async (req, res) => {
     }
 };
 
+
 // LOGIN API
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        if (!email || !password) {
+        // Required fields validation
+        if (!email?.trim() || !password) {
             return res.status(400).json({
                 success: false,
                 message: "Email and password are required"
@@ -77,10 +93,19 @@ const loginUser = async (req, res) => {
 
         const normalizedEmail = email.trim().toLowerCase();
 
+        // Email format validation
+        if (!emailRegex.test(normalizedEmail)) {
+            return res.status(400).json({
+                success: false,
+                message: "Please enter a valid email address"
+            });
+        }
+
         const user = await User.findOne({
             email: normalizedEmail
         });
 
+        // Same message for security
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -98,6 +123,11 @@ const loginUser = async (req, res) => {
                 success: false,
                 message: "Invalid email or password"
             });
+        }
+
+        // JWT configuration check
+        if (!process.env.JWT_SECRET) {
+            throw new Error("JWT_SECRET is not configured");
         }
 
         const token = jwt.sign(

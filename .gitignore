@@ -25,6 +25,9 @@ coverage
 # nyc test coverage
 .nyc_output
 
+# Personal database testing and sample data files
+backend/init
+
 # Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 

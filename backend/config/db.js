@@ -8,11 +8,12 @@ const connectDB = async () => {
     }
 
     try {
-        await mongoose.connect(mongoURI);
+        await mongoose.connect(mongoURI,{
+            dbName: "finance_copilot_db"
+        });
         console.log("MongoDB connected successfully.");
     } catch (error) {
-        console.error("MongoDB connection failed:", error.message);
-        throw error;
+        throw new Error("MongoDB connection failed:", error.message);
     }
 };
 

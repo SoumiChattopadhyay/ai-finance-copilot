@@ -20,9 +20,11 @@ const transactionSchema = new mongoose.Schema({
     },
 
     category:{
-        type: String,
-        enum: ["Income", "Expenses"],
-
+        type: {
+            type: String,
+            enum: ["Income", "Expenses"],
+            required:true
+        },
         subcategory: {
             type: String,
             enum: [
@@ -46,14 +48,12 @@ const transactionSchema = new mongoose.Schema({
                 "Other Expense"
             ],
             required: true
-        },
-
-        required: true
+        }
     },
 
     merchant: {
         type: String,
-        trime: true
+        trim: true
     },
 
     receiver: {

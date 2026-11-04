@@ -1,0 +1,109 @@
+.import-container {
+  padding: 8px;
+  background: var(--white);
+}
+
+.import-heading h2 {
+  margin: 0 0 8px;
+  color: var(--text);
+  font-size: 21px;
+}
+
+.import-heading p {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.upload-dropzone {
+  padding: 28px 15px;
+  text-align: center;
+  border: 2px dashed #d9cff5;
+  border-radius: 12px;
+  background: #faf8ff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone.dragging {
+  border-color: var(--purple);
+  background: #f2edff;
+}
+
+.upload-icon {
+  width: 42px;
+  height: 42px;
+  margin: 0 auto 12px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #eee7ff;
+  color: var(--purple);
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.upload-dropzone h3 {
+  margin: 0 0 8px;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.upload-dropzone p {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.upload-dropzone p span {
+  color: var(--purple);
+  font-weight: 700;
+}
+
+.upload-dropzone small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.selected-file {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.selected-file button {
+  border: none;
+  background: transparent;
+  color: var(--red);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.upload-button {
+  margin-top: 16px;
+}
+
+.upload-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.upload-message {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .upload-dropzone {
+    padding: 22px 10px;
+  }
+}

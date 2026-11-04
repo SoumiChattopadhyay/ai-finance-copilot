@@ -1,0 +1,259 @@
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f7f5ff;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+/* Sidebar */
+.dashboard-sidebar {
+  width: 245px;
+  min-width: 245px;
+  min-height: 100vh;
+  padding: 30px 20px;
+  background: #211747;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  font-size: 25px;
+  margin: 0 0 45px;
+}
+
+.brand span {
+  color: #a993ff;
+}
+
+.sidebar-label {
+  color: #a69cbe;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+}
+
+.sidebar-link {
+  display: block;
+  padding: 13px 15px;
+  margin-bottom: 7px;
+  border-radius: 9px;
+  color: #ded8ef;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+  background: #7045e8;
+  color: white;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  color: white;
+  font-size: 13px;
+}
+
+.sidebar-bottom small {
+  color: #aaa0c4;
+}
+
+/* Main area */
+.dashboard-main {
+  flex: 1;
+  min-width: 0;
+  padding: 30px 38px;
+}
+
+.dashboard-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 25px;
+  border-bottom: 1px solid #e8e4ef;
+}
+
+.dashboard-topbar h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.dashboard-topbar p,
+.welcome-section p {
+  color: #777087;
+  margin: 7px 0 0;
+  font-size: 14px;
+}
+
+.profile-avatar {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #7045e8;
+  color: white;
+  font-weight: 700;
+}
+
+.welcome-section {
+  margin: 30px 0 25px;
+}
+
+.welcome-section h1 {
+  margin: 0;
+  font-size: 27px;
+  color: #211747;
+}
+
+/* Summary cards */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.summary-card {
+  padding: 22px;
+  background: white;
+  border: 1px solid #e8e4ef;
+  border-radius: 13px;
+  box-shadow: 0 3px 12px rgba(40, 25, 80, 0.04);
+}
+
+.summary-card p {
+  margin: 0;
+  color: #777087;
+  font-size: 13px;
+}
+
+.summary-card h2 {
+  margin: 14px 0 7px;
+  font-size: 25px;
+  color: #211747;
+}
+
+.summary-card span {
+  color: #9690a5;
+  font-size: 12px;
+}
+
+.income-text {
+  color: #25874e !important;
+}
+
+.expense-text {
+  color: #b52b40 !important;
+}
+
+/* Transaction sections */
+.transaction-workspace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 25px;
+  align-items: start;
+}
+
+.workspace-card {
+  min-width: 0;
+  background: white;
+  border: 1px solid #e8e4ef;
+  border-radius: 13px;
+  padding: 20px;
+  box-shadow: 0 3px 12px rgba(40, 25, 80, 0.04);
+}
+
+.workspace-card > * {
+  margin: 0 !important;
+}
+
+.transaction-list-card {
+  overflow: hidden;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 750px) {
+  .dashboard-sidebar {
+    display: none;
+  }
+
+  .dashboard-main {
+    padding: 20px 15px;
+  }
+
+  .transaction-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Sidebar branding */
+.brand {
+  color: #ffffff;
+  text-align: left;
+  font-size: 25px;
+}
+
+/* Remove nested card appearance */
+.workspace-card .transaction-form-container,
+.workspace-card .import-container {
+  border: none;
+  box-shadow: none;
+  padding: 8px;
+}
+
+/* Better transaction form sizing */
+.transaction-form-container h2,
+.import-container h2 {
+  font-size: 21px;
+}
+
+.transaction-form-group {
+  margin-bottom: 14px;
+}
+
+/* Keep sidebar visible */
+.dashboard-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  align-self: flex-start;
+}
+
+/* Better transaction list controls */
+.transaction-controls {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) 200px;
+  gap: 12px;
+}
+
+.transaction-controls input,
+.transaction-controls select {
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Smaller action buttons */
+.action-buttons .btn {
+  padding: 7px 11px;
+  font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .transaction-controls {
+    grid-template-columns: 1fr;
+  }
+}

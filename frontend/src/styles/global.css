@@ -1,0 +1,132 @@
+/* PayGuard AI - Shared CSS */
+
+:root {
+  --purple: #7045e8;
+  --purple-dark: #552bd5;
+  --background: #f7f5ff;
+  --white: #ffffff;
+  --text: #211747;
+  --muted: #6c6682;
+  --border: #e8e4ef;
+  --green: #25874e;
+  --red: #b52b40;
+}
+
+/* Basic page styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--background);
+}
+
+/* Common card */
+.card {
+  padding: 24px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+/* Buttons */
+.btn {
+  padding: 11px 18px;
+  border: 0;
+  border-radius: 9px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-primary {
+  color: var(--white);
+  background: var(--purple);
+}
+
+.btn-primary:hover {
+  background: var(--purple-dark);
+}
+
+.btn-secondary {
+  color: var(--text);
+  background: var(--white);
+  border: 1px solid var(--border);
+}
+
+.btn-danger {
+  color: var(--white);
+  background: var(--red);
+}
+
+/* Form fields */
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--white);
+  color: var(--text);
+  font: inherit;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: 2px solid #d8caff;
+  border-color: var(--purple);
+}
+
+/* Tables */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+}
+
+.table th,
+.table td {
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.table th {
+  color: var(--muted);
+  background: #faf8ff;
+}
+
+/* Status labels */
+.badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badge-success {
+  color: var(--green);
+  background: #eaf8f0;
+}
+
+.badge-danger {
+  color: var(--red);
+  background: #fff0f1;
+}
+
+/* Small screens */
+@media (max-width: 600px) {
+  .card {
+    padding: 16px;
+  }
+
+  .table {
+    min-width: 600px;
+  }
+}

@@ -1,0 +1,60 @@
+.transaction-form-container {
+  max-width: 600px;
+  margin: 24px auto;
+  padding: 24px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.transaction-form-container h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  color: var(--text);
+}
+
+.transaction-form-group {
+  margin-bottom: 18px;
+}
+
+.transaction-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.transaction-form-group input,
+.transaction-form-group select,
+.transaction-form-group textarea {
+  width: 100%;
+}
+
+.transaction-form-container button {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .transaction-form-container {
+    margin: 12px;
+    padding: 16px;
+  }
+}
+
+.form-message {
+  margin-top: 15px;
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.form-message.success {
+  color: #25874e;
+  background: #eaf8f0;
+}
+
+.form-message.error {
+  color: #b52b40;
+  background: #fff0f1;
+}

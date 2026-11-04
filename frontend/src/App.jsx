@@ -1,10 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "./components/Auth/AuthPage";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
-
-function Dashboard() {
-  return <h1>Welcome to PayGuard AI Dashboard</h1>;
-}
+import Dashboard from "./components/Dashboard/Dashboard";
 
 function App() {
   return (

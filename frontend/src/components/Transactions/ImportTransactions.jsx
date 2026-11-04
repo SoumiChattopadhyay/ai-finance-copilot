@@ -1,3 +1,4 @@
+
 import { useRef, useState } from "react";
 import "./ImportTransactions.css";
 
@@ -6,11 +7,13 @@ function ImportTransactions({ onUpload }) {
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
   const [dragging, setDragging] = useState(false);
+  const [uploadResult, setUploadResult] = useState(null);
 
   const fileInputRef = useRef(null);
 
   const selectFile = (selectedFile) => {
     setMessage("");
+    setUploadResult(null);
 
     if (!selectedFile) return;
 
@@ -37,22 +40,20 @@ function ImportTransactions({ onUpload }) {
       return;
     }
 
-    if (!onUpload) {
-      setMessage("Upload interface ready. Backend integration pending.");
-      return;
-    }
-
     try {
       setUploading(true);
       setMessage("");
+      setUploadResult(null);
 
-      await onUpload(file);
+      const result = await onUpload(file);
 
-      setMessage("CSV uploaded successfully!");
+      setUploadResult(result);
+      setMessage(result.message || "CSV processing completed.");
+
       setFile(null);
       fileInputRef.current.value = "";
     } catch (error) {
-      setMessage("Upload failed. Please try again.");
+      setMessage(error.message || "CSV upload failed.");
     } finally {
       setUploading(false);
     }
@@ -85,10 +86,9 @@ function ImportTransactions({ onUpload }) {
           tabIndex={0}
         >
           <div className="upload-icon">↑</div>
-
           <h3>Drag and drop your CSV file here</h3>
           <p>or <span>browse files</span> from your device</p>
-          <small>CSV files only</small>
+          <small>CSV files only (Maximum 5 MB)</small>
 
           <input
             ref={fileInputRef}
@@ -108,6 +108,7 @@ function ImportTransactions({ onUpload }) {
                 setFile(null);
                 fileInputRef.current.value = "";
                 setMessage("");
+                setUploadResult(null);
               }}
             >
               Remove
@@ -118,12 +119,34 @@ function ImportTransactions({ onUpload }) {
         <button
           type="submit"
           className="btn btn-primary upload-button"
-          disabled={uploading}
+          disabled={uploading || !file}
         >
           {uploading ? "Uploading..." : "Upload CSV"}
         </button>
 
-        {message && <p className="upload-message">{message}</p>}
+        {message && (
+          <p className="upload-message" role="status">
+            {message}
+          </p>
+        )}
+
+        {uploadResult && (
+          <div className="upload-message">
+            <p>Imported: {uploadResult.importedCount}</p>
+            <p>Invalid rows: {uploadResult.invalidCount}</p>
+
+            {uploadResult.invalidRows?.length > 0 && (
+              <div>
+                <strong>Rows with errors:</strong>
+                {uploadResult.invalidRows.map((item) => (
+                  <p key={item.row}>
+                    Row {item.row}: {item.reason}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </form>
     </div>
   );

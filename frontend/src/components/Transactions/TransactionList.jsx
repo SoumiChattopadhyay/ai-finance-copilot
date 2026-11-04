@@ -28,13 +28,30 @@ function TransactionList({
         return matchesSearch && matchesFilter;
     });
 
-    const handleDelete = (id) => {
-        if (window.confirm("Are you sure you want to delete this transaction?")) {
-            onDeleteTransaction(id);
+
+    const handleDelete = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this transaction?")) {
+            return;
+        }
+
+        try {
+            await onDeleteTransaction(id);
+
+            setMessage({
+                type: "success",
+                text: "Transaction deleted successfully!",
+            });
+        } catch (error) {
+            setMessage({
+                type: "error",
+                text: error.message || "Failed to delete transaction.",
+            });
         }
     };
 
-    const handleEdit = (e) => {
+
+
+    const handleEdit = async (e) => {
         e.preventDefault();
 
         if (Number(editingTransaction.amount) <= 0) {
@@ -46,7 +63,7 @@ function TransactionList({
         }
 
         try {
-            onUpdateTransaction(editingTransaction);
+            await onUpdateTransaction(editingTransaction);
 
             setEditingTransaction(null);
 
@@ -57,10 +74,11 @@ function TransactionList({
         } catch (error) {
             setMessage({
                 type: "error",
-                text: "Failed to update transaction.",
+                text: error.message || "Failed to update transaction.",
             });
         }
     };
+
 
     return (
         <div className="transaction-page">

@@ -1,41 +1,79 @@
+
 import { useState } from "react";
 import "./TransactionForm.css";
+
+const incomeCategories = [
+    "Salary", "Freelance", "Business", "Investment", "Other Income"
+];
+
+const expenseCategories = [
+    "Food", "Groceries", "Shopping", "Rent", "Bills", "Utilities",
+    "Travel", "Entertainment", "Healthcare", "Education",
+    "Subscription", "Transfer", "Other Expense"
+];
 
 function TransactionForm({ onAddTransaction }) {
     const [formData, setFormData] = useState({
         amount: "",
         type: "Expense",
         category: "",
+        paymentMethod: "UPI",
         date: "",
         description: "",
+        merchant: "",
+        receiver: "",
         status: "Success",
     });
 
-    const [message, setMessage] = useState({
-        type: "",
-        text: "",
-    });
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState({ type: "", text: "" });
+
+    const availableCategories =
+        formData.type === "Income" ? incomeCategories : expenseCategories;
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+        const { name, value } = e.target;
+
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+            ...(name === "type" ? { category: "" } : {}),
+        }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setMessage({ type: "", text: "" });
 
-        if (Number(formData.amount) <= 0) {
+        if (!formData.category || !formData.date) {
             setMessage({
                 type: "error",
-                text: "Please enter a valid amount.",
+                text: "Please complete all required fields.",
             });
             return;
         }
 
+        const payload = {
+            amount: Number(formData.amount),
+            type: formData.type === "Income" ? "Credit" : "Debit",
+            category: {
+                type: formData.type === "Income" ? "Income" : "Expenses",
+                subcategory: formData.category,
+            },
+            paymentMethod: formData.paymentMethod,
+            transactionDateTime: new Date(
+                `${formData.date}T12:00:00`
+            ).toISOString(),
+            transactionStatus: formData.status,
+            description: formData.description.trim(),
+            merchant: formData.merchant.trim(),
+            receiver: formData.receiver.trim(),
+        };
+
         try {
-            onAddTransaction(formData);
+            setLoading(true);
+
+            await onAddTransaction(payload);
 
             setMessage({
                 type: "success",
@@ -46,15 +84,20 @@ function TransactionForm({ onAddTransaction }) {
                 amount: "",
                 type: "Expense",
                 category: "",
+                paymentMethod: "UPI",
                 date: "",
                 description: "",
+                merchant: "",
+                receiver: "",
                 status: "Success",
             });
         } catch (error) {
             setMessage({
                 type: "error",
-                text: "Failed to add transaction. Please try again.",
+                text: error.message || "Failed to add transaction.",
             });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -92,6 +135,43 @@ function TransactionForm({ onAddTransaction }) {
                 </div>
 
                 <div className="transaction-form-group">
+                    <label>Category</label>
+                    <select
+                        className="select"
+                        name="category"
+                        value={formData.category}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Select category</option>
+                        {availableCategories.map((category) => (
+                            <option key={category} value={category}>
+                                {category}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="transaction-form-group">
+                    <label>Payment Method</label>
+                    <select
+                        className="select"
+                        name="paymentMethod"
+                        value={formData.paymentMethod}
+                        onChange={handleChange}
+                    >
+                        {[
+                            "UPI", "Credit Card", "Debit Card",
+                            "Bank Transfer", "Net Banking", "Cash", "Wallet"
+                        ].map((method) => (
+                            <option key={method} value={method}>
+                                {method}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="transaction-form-group">
                     <label>Transaction Status</label>
                     <select
                         className="select"
@@ -99,23 +179,14 @@ function TransactionForm({ onAddTransaction }) {
                         value={formData.status}
                         onChange={handleChange}
                     >
-                        <option value="Success">Success</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Failed">Failed</option>
+                        {["Success", "Pending", "Failed", "Cancelled", "Refunded"].map(
+                            (status) => (
+                                <option key={status} value={status}>
+                                    {status}
+                                </option>
+                            )
+                        )}
                     </select>
-                </div>
-
-                <div className="transaction-form-group">
-                    <label>Category</label>
-                    <input
-                        className="input"
-                        type="text"
-                        name="category"
-                        placeholder="e.g. Food, Travel, Salary"
-                        value={formData.category}
-                        onChange={handleChange}
-                        required
-                    />
                 </div>
 
                 <div className="transaction-form-group">
@@ -127,6 +198,30 @@ function TransactionForm({ onAddTransaction }) {
                         value={formData.date}
                         onChange={handleChange}
                         required
+                    />
+                </div>
+
+                <div className="transaction-form-group">
+                    <label>Merchant (Optional)</label>
+                    <input
+                        className="input"
+                        type="text"
+                        name="merchant"
+                        placeholder="e.g. Amazon"
+                        value={formData.merchant}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div className="transaction-form-group">
+                    <label>Receiver (Optional)</label>
+                    <input
+                        className="input"
+                        type="text"
+                        name="receiver"
+                        placeholder="e.g. Rahul"
+                        value={formData.receiver}
+                        onChange={handleChange}
                     />
                 </div>
 
@@ -143,12 +238,16 @@ function TransactionForm({ onAddTransaction }) {
                     />
                 </div>
 
-                <button type="submit" className="btn btn-primary">
-                    Add Transaction
+                <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={loading}
+                >
+                    {loading ? "Adding..." : "Add Transaction"}
                 </button>
 
                 {message.text && (
-                    <p className={`form-message ${message.type}`}>
+                    <p className={`form-message ${message.type}`} role="status">
                         {message.text}
                     </p>
                 )}

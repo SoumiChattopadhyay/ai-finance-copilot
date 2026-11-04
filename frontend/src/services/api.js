@@ -1,13 +1,17 @@
+
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const apiRequest = async (endpoint, options = {}) => {
+  const token = localStorage.getItem("token");
+
+  const isFormData = options.body instanceof FormData;
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers: {
-      ...(options.body instanceof FormData
-        ? {}
-        : { "Content-Type": "application/json" }),
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   });
@@ -23,6 +27,8 @@ const apiRequest = async (endpoint, options = {}) => {
 
 export const transactionAPI = {
   getAll: () => apiRequest("/transactions"),
+
+  getById: (id) => apiRequest(`/transactions/${id}`),
 
   create: (transaction) =>
     apiRequest("/transactions", {

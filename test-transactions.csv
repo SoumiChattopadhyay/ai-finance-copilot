@@ -1,0 +1,4 @@
+amount,type,categoryType,subcategory,paymentMethod,transactionDateTime,transactionStatus,merchant,receiver,description
+850,Debit,Expenses,Food,UPI,2026-11-04T12:00:00.000Z,Success,Swiggy,,Lunch order
+2500,Debit,Expenses,Shopping,Credit Card,2026-11-04T14:00:00.000Z,Success,Amazon,,Shopping
+5000,Credit,Income,Freelance,Bank Transfer,2026-11-04T16:00:00.000Z,Success,,Rahul,Freelance payment

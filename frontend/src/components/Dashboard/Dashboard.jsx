@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { transactionAPI } from "../../services/api";
 
 import TransactionList from "../Transactions/TransactionList";
 import TransactionForm from "../Transactions/TransactionForm";
@@ -7,65 +8,111 @@ import ImportTransactions from "../Transactions/ImportTransactions";
 import "./Dashboard.css";
 
 function Dashboard() {
-    const [transactions, setTransactions] = useState([
-        {
-            id: 1,
-            description: "Grocery Shopping",
-            category: "Food",
-            type: "Expense",
-            amount: 1500,
-            date: "2026-11-01",
-            status: "Success",
-        },
-        {
-            id: 2,
-            description: "Monthly Salary",
-            category: "Salary",
-            type: "Income",
-            amount: 30000,
-            date: "2026-11-02",
-            status: "Success",
-        },
-        {
-            id: 3,
-            description: "Electricity Bill",
-            category: "Bills",
-            type: "Expense",
-            amount: 1200,
-            date: "2026-11-03",
-            status: "Pending",
-        },
-    ]);
+    const [transactions, setTransactions] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState("");
 
-    const addTransaction = (newTransaction) => {
-        setTransactions((prev) => [
-            {
-                ...newTransaction,
-                id: Date.now(),
-                amount: Number(newTransaction.amount),
-            },
-            ...prev,
-        ]);
+    useEffect(() => {
+        const fetchTransactions = async () => {
+            try {
+                setIsLoading(true);
+                setError("");
+
+                const response = await transactionAPI.getAll();
+
+                const formattedTransactions = response.data.map((t) => ({
+                    ...t,
+                    id: t._id,
+                    category: t.category.subcategory,
+                    type: t.category.type === "Income" ? "Income" : "Expense",
+                    date: new Date(t.transactionDateTime)
+                        .toISOString()
+                        .slice(0, 10),
+                    status: t.transactionStatus,
+                }));
+
+                setTransactions(formattedTransactions);
+            } catch (err) {
+                setError(err.message || "Failed to fetch transactions.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchTransactions();
+    }, []);
+
+
+    const addTransaction = async (newTransaction) => {
+        const response = await transactionAPI.create(newTransaction);
+
+        const t = response.data;
+
+        const formattedTransaction = {
+            ...t,
+            id: t._id,
+            category: t.category.subcategory,
+            type: t.category.type === "Income" ? "Income" : "Expense",
+            date: new Date(t.transactionDateTime).toISOString().slice(0, 10),
+            status: t.transactionStatus,
+        };
+
+        setTransactions((prev) => [formattedTransaction, ...prev]);
     };
 
-    const deleteTransaction = (id) => {
+
+
+    const deleteTransaction = async (id) => {
+        await transactionAPI.delete(id);
+
         setTransactions((prev) =>
             prev.filter((transaction) => transaction.id !== id)
         );
     };
 
-    const updateTransaction = (updatedTransaction) => {
+    const updateTransaction = async (updatedTransaction) => {
+        const payload = {
+            amount: Number(updatedTransaction.amount),
+            type: updatedTransaction.type === "Income" ? "Credit" : "Debit",
+            category: {
+                type: updatedTransaction.type === "Income" ? "Income" : "Expenses",
+                subcategory: updatedTransaction.category,
+            },
+            paymentMethod: updatedTransaction.paymentMethod,
+            transactionDateTime: new Date(
+                `${updatedTransaction.date}T12:00:00`
+            ).toISOString(),
+            transactionStatus: updatedTransaction.status,
+            description: updatedTransaction.description,
+            merchant: updatedTransaction.merchant || "",
+            receiver: updatedTransaction.receiver || "",
+        };
+
+        const response = await transactionAPI.update(
+            updatedTransaction.id,
+            payload
+        );
+
+        const t = response.data;
+
+        const formattedTransaction = {
+            ...t,
+            id: t._id,
+            category: t.category.subcategory,
+            type: t.category.type === "Income" ? "Income" : "Expense",
+            date: new Date(t.transactionDateTime).toISOString().slice(0, 10),
+            status: t.transactionStatus,
+        };
+
         setTransactions((prev) =>
             prev.map((transaction) =>
                 transaction.id === updatedTransaction.id
-                    ? {
-                        ...updatedTransaction,
-                        amount: Number(updatedTransaction.amount),
-                    }
+                    ? formattedTransaction
                     : transaction
             )
         );
     };
+
 
     const totalIncome = transactions
         .filter((t) => t.type === "Income")
@@ -76,6 +123,27 @@ function Dashboard() {
         .reduce((sum, t) => sum + Number(t.amount), 0);
 
     const balance = totalIncome - totalExpenses;
+
+
+    const uploadTransactions = async (file) => {
+        const response = await transactionAPI.uploadCSV(file);
+
+        const transactionsResponse = await transactionAPI.getAll();
+
+        const formattedTransactions = transactionsResponse.data.map((t) => ({
+            ...t,
+            id: t._id,
+            category: t.category.subcategory,
+            type: t.category.type === "Income" ? "Income" : "Expense",
+            date: new Date(t.transactionDateTime).toISOString().slice(0, 10),
+            status: t.transactionStatus,
+        }));
+
+        setTransactions(formattedTransactions);
+
+        return response;
+    };
+
 
     return (
         <div className="dashboard-layout">
@@ -147,7 +215,7 @@ function Dashboard() {
                     </div>
 
                     <div className="workspace-card">
-                        <ImportTransactions />
+                        <ImportTransactions onUpload={uploadTransactions} />
                     </div>
                 </section>
 
@@ -159,6 +227,8 @@ function Dashboard() {
                         transactions={transactions}
                         onDeleteTransaction={deleteTransaction}
                         onUpdateTransaction={updateTransaction}
+                        isLoading={isLoading}
+                        error={error}
                     />
                 </section>
             </main>

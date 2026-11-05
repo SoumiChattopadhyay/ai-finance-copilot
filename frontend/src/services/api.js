@@ -18,6 +18,17 @@ const apiRequest = async (endpoint, options = {}) => {
 
   const data = await response.json().catch(() => ({}));
 
+  if (response.status === 401) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    if (window.location.pathname !== "/login") {
+      window.location.assign("/login");
+    }
+
+    throw new Error(data.message || "Session expired. Please log in again.");
+  }
+
   if (!response.ok) {
     throw new Error(data.message || "Something went wrong");
   }

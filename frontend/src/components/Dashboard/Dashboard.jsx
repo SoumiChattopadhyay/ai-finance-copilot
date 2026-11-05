@@ -1,4 +1,6 @@
+
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { transactionAPI } from "../../services/api";
 
 import TransactionList from "../Transactions/TransactionList";
@@ -8,9 +10,18 @@ import ImportTransactions from "../Transactions/ImportTransactions";
 import "./Dashboard.css";
 
 function Dashboard() {
+    const navigate = useNavigate();
+
     const [transactions, setTransactions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        navigate("/login", { replace: true });
+    };
 
     useEffect(() => {
         const fetchTransactions = async () => {
@@ -42,7 +53,6 @@ function Dashboard() {
         fetchTransactions();
     }, []);
 
-
     const addTransaction = async (newTransaction) => {
         const response = await transactionAPI.create(newTransaction);
 
@@ -59,8 +69,6 @@ function Dashboard() {
 
         setTransactions((prev) => [formattedTransaction, ...prev]);
     };
-
-
 
     const deleteTransaction = async (id) => {
         await transactionAPI.delete(id);
@@ -113,7 +121,6 @@ function Dashboard() {
         );
     };
 
-
     const totalIncome = transactions
         .filter((t) => t.type === "Income")
         .reduce((sum, t) => sum + Number(t.amount), 0);
@@ -123,7 +130,6 @@ function Dashboard() {
         .reduce((sum, t) => sum + Number(t.amount), 0);
 
     const balance = totalIncome - totalExpenses;
-
 
     const uploadTransactions = async (file) => {
         const response = await transactionAPI.uploadCSV(file);
@@ -143,7 +149,6 @@ function Dashboard() {
 
         return response;
     };
-
 
     return (
         <div className="dashboard-layout">
@@ -171,7 +176,17 @@ function Dashboard() {
                         <p>Manage your finances in one place.</p>
                     </div>
 
-                    <div className="profile-avatar">U</div>
+                    <div className="dashboard-user-actions">
+                        <div className="profile-avatar">U</div>
+
+                        <button
+                            type="button"
+                            className="logout-button"
+                            onClick={handleLogout}
+                        >
+                            Logout
+                        </button>
+                    </div>
                 </header>
 
                 <section className="welcome-section" id="overview">

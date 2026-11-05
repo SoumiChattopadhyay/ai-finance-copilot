@@ -98,6 +98,34 @@
   font-weight: 700;
 }
 
+.dashboard-user-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logout-button {
+  padding: 9px 16px;
+  border: 1px solid #e8e4ef;
+  border-radius: 8px;
+  background: white;
+  color: #211747;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.logout-button:hover {
+  background: #7045e8;
+  color: white;
+}
+
+.logout-button:focus-visible {
+  outline: 2px solid #7045e8;
+  outline-offset: 3px;
+}
+
 .welcome-section {
   margin: 30px 0 25px;
 }

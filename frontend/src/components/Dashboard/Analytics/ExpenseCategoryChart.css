@@ -1,0 +1,117 @@
+
+.expense-category-card {
+    background: #ffffff;
+    border: 1px solid #e8e4ef;
+    border-radius: 13px;
+    padding: 24px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 12px rgba(40, 25, 80, 0.04);
+    min-width: 0;
+}
+
+.expense-category-header {
+    margin-bottom: 15px;
+}
+
+.expense-category-header h2 {
+    margin: 0;
+    color: #211747;
+    font-size: 19px;
+}
+
+.expense-category-header p {
+    margin: 7px 0 0;
+    color: #777087;
+    font-size: 13px;
+}
+
+.expense-chart-content {
+    width: 100%;
+}
+
+.expense-donut-wrapper {
+    position: relative;
+    width: 100%;
+    height: 340px;
+}
+
+.expense-donut-center {
+    position: absolute;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    pointer-events: none;
+    text-align: center;
+}
+
+.expense-donut-center span {
+    color: #777087;
+    font-size: 12px;
+}
+
+.expense-donut-center strong {
+    color: #211747;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.expense-chart-tooltip {
+    background: #ffffff;
+    border: 1px solid #e8e4ef;
+    border-radius: 9px;
+    padding: 12px 15px;
+    box-shadow: 0 4px 15px rgba(40, 25, 80, 0.1);
+}
+
+.expense-chart-tooltip strong {
+    color: #211747;
+    font-size: 13px;
+}
+
+.expense-chart-tooltip p {
+    margin: 6px 0;
+    color: #7045e8;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.expense-chart-tooltip span {
+    color: #777087;
+    font-size: 11px;
+}
+
+.expense-chart-message {
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #777087;
+    font-size: 14px;
+    text-align: center;
+}
+
+.expense-chart-message span {
+    color: #9690a5;
+    font-size: 12px;
+    max-width: 320px;
+}
+
+@media (max-width: 600px) {
+    .expense-category-card {
+        padding: 16px;
+    }
+
+    .expense-donut-wrapper {
+        height: 300px;
+    }
+
+    .expense-donut-center strong {
+        font-size: 15px;
+    }
+}

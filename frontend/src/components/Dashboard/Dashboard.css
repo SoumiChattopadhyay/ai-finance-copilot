@@ -285,3 +285,23 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Financial Analytics Layout */
+.financial-analytics-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: stretch;
+    margin-bottom: 25px;
+}
+
+.financial-analytics-grid > * {
+    min-width: 0;
+    margin-bottom: 0;
+}
+
+@media (max-width: 1000px) {
+    .financial-analytics-grid {
+        grid-template-columns: 1fr;
+    }
+}

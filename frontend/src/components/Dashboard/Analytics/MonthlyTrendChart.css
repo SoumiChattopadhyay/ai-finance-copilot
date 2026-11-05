@@ -1,0 +1,98 @@
+
+.monthly-trend-card {
+    background: #ffffff;
+    border: 1px solid #e8e4ef;
+    border-radius: 13px;
+    padding: 24px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 12px rgba(40, 25, 80, 0.04);
+    min-width: 0;
+}
+
+.monthly-trend-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.monthly-trend-header h2 {
+    margin: 0;
+    color: #211747;
+    font-size: 19px;
+}
+
+.monthly-trend-header p {
+    margin: 7px 0 0;
+    color: #777087;
+    font-size: 13px;
+}
+
+.monthly-trend-period {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #f3efff;
+    color: #7045e8;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.monthly-trend-chart {
+    width: 100%;
+    height: 320px;
+}
+
+.monthly-trend-tooltip {
+    background: #ffffff;
+    border: 1px solid #e8e4ef;
+    border-radius: 9px;
+    padding: 12px 15px;
+    box-shadow: 0 4px 15px rgba(40, 25, 80, 0.1);
+}
+
+.monthly-trend-tooltip strong {
+    display: block;
+    color: #211747;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.monthly-trend-tooltip p {
+    margin: 5px 0;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.monthly-trend-message {
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    color: #777087;
+    font-size: 14px;
+    text-align: center;
+}
+
+.monthly-trend-message span {
+    color: #9690a5;
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    .monthly-trend-card {
+        padding: 16px;
+    }
+
+    .monthly-trend-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .monthly-trend-chart {
+        height: 280px;
+    }
+}

@@ -1,0 +1,70 @@
+
+.financial-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.financial-summary-card {
+    background: #ffffff;
+    border: 1px solid #e8e4ef;
+    border-radius: 13px;
+    padding: 22px;
+    box-shadow: 0 3px 12px rgba(40, 25, 80, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-width: 0;
+}
+
+.financial-summary-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(40, 25, 80, 0.08);
+}
+
+.summary-title {
+    margin: 0;
+    color: #777087;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.summary-value {
+    margin: 14px 0 7px;
+    font-size: 25px;
+    font-weight: 700;
+    color: #211747;
+    overflow-wrap: anywhere;
+}
+
+.summary-description {
+    color: #9690a5;
+    font-size: 12px;
+}
+
+.financial-summary-card.income .summary-value {
+    color: #25874e;
+}
+
+.financial-summary-card.expenses .summary-value {
+    color: #b52b40;
+}
+
+.financial-summary-card.balance .summary-value {
+    color: #211747;
+}
+
+.financial-summary-card.transactions .summary-value {
+    color: #7045e8;
+}
+
+@media (max-width: 1100px) {
+    .financial-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .financial-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}

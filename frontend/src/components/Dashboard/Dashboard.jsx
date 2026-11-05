@@ -7,6 +7,14 @@ import TransactionList from "../Transactions/TransactionList";
 import TransactionForm from "../Transactions/TransactionForm";
 import ImportTransactions from "../Transactions/ImportTransactions";
 
+import FinancialSummary from "./Analytics/FinancialSummary";
+
+import IncomeExpenseChart from "./Analytics/IncomeExpenseChart";
+
+import ExpenseCategoryChart from "./Analytics/ExpenseCategoryChart";
+
+import MonthlyTrendChart from "./Analytics/MonthlyTrendChart";
+
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -16,6 +24,19 @@ function Dashboard() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // Format transaction data received from backend
+    const formatTransaction = (t) => ({
+        ...t,
+        id: t._id,
+        category: t.category.subcategory,
+        type: t.category.type === "Income" ? "Income" : "Expense",
+        date: new Date(t.transactionDateTime)
+            .toISOString()
+            .slice(0, 10),
+        status: t.transactionStatus,
+    });
+
+    // Logout
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -23,6 +44,7 @@ function Dashboard() {
         navigate("/login", { replace: true });
     };
 
+    // Fetch transactions from backend
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
@@ -31,20 +53,15 @@ function Dashboard() {
 
                 const response = await transactionAPI.getAll();
 
-                const formattedTransactions = response.data.map((t) => ({
-                    ...t,
-                    id: t._id,
-                    category: t.category.subcategory,
-                    type: t.category.type === "Income" ? "Income" : "Expense",
-                    date: new Date(t.transactionDateTime)
-                        .toISOString()
-                        .slice(0, 10),
-                    status: t.transactionStatus,
-                }));
+                const formattedTransactions = response.data.map(
+                    formatTransaction
+                );
 
                 setTransactions(formattedTransactions);
             } catch (err) {
-                setError(err.message || "Failed to fetch transactions.");
+                setError(
+                    err.message || "Failed to fetch transactions."
+                );
             } finally {
                 setIsLoading(false);
             }
@@ -53,23 +70,19 @@ function Dashboard() {
         fetchTransactions();
     }, []);
 
+    // Add transaction
     const addTransaction = async (newTransaction) => {
         const response = await transactionAPI.create(newTransaction);
 
-        const t = response.data;
+        const formattedTransaction = formatTransaction(response.data);
 
-        const formattedTransaction = {
-            ...t,
-            id: t._id,
-            category: t.category.subcategory,
-            type: t.category.type === "Income" ? "Income" : "Expense",
-            date: new Date(t.transactionDateTime).toISOString().slice(0, 10),
-            status: t.transactionStatus,
-        };
-
-        setTransactions((prev) => [formattedTransaction, ...prev]);
+        setTransactions((prev) => [
+            formattedTransaction,
+            ...prev,
+        ]);
     };
 
+    // Delete transaction
     const deleteTransaction = async (id) => {
         await transactionAPI.delete(id);
 
@@ -78,18 +91,31 @@ function Dashboard() {
         );
     };
 
+    // Update transaction
     const updateTransaction = async (updatedTransaction) => {
         const payload = {
             amount: Number(updatedTransaction.amount),
-            type: updatedTransaction.type === "Income" ? "Credit" : "Debit",
+
+            type:
+                updatedTransaction.type === "Income"
+                    ? "Credit"
+                    : "Debit",
+
             category: {
-                type: updatedTransaction.type === "Income" ? "Income" : "Expenses",
+                type:
+                    updatedTransaction.type === "Income"
+                        ? "Income"
+                        : "Expenses",
+
                 subcategory: updatedTransaction.category,
             },
+
             paymentMethod: updatedTransaction.paymentMethod,
+
             transactionDateTime: new Date(
                 `${updatedTransaction.date}T12:00:00`
             ).toISOString(),
+
             transactionStatus: updatedTransaction.status,
             description: updatedTransaction.description,
             merchant: updatedTransaction.merchant || "",
@@ -101,16 +127,7 @@ function Dashboard() {
             payload
         );
 
-        const t = response.data;
-
-        const formattedTransaction = {
-            ...t,
-            id: t._id,
-            category: t.category.subcategory,
-            type: t.category.type === "Income" ? "Income" : "Expense",
-            date: new Date(t.transactionDateTime).toISOString().slice(0, 10),
-            status: t.transactionStatus,
-        };
+        const formattedTransaction = formatTransaction(response.data);
 
         setTransactions((prev) =>
             prev.map((transaction) =>
@@ -121,6 +138,7 @@ function Dashboard() {
         );
     };
 
+    // Calculate financial summary
     const totalIncome = transactions
         .filter((t) => t.type === "Income")
         .reduce((sum, t) => sum + Number(t.amount), 0);
@@ -131,19 +149,15 @@ function Dashboard() {
 
     const balance = totalIncome - totalExpenses;
 
+    // Upload CSV transactions
     const uploadTransactions = async (file) => {
         const response = await transactionAPI.uploadCSV(file);
 
         const transactionsResponse = await transactionAPI.getAll();
 
-        const formattedTransactions = transactionsResponse.data.map((t) => ({
-            ...t,
-            id: t._id,
-            category: t.category.subcategory,
-            type: t.category.type === "Income" ? "Income" : "Expense",
-            date: new Date(t.transactionDateTime).toISOString().slice(0, 10),
-            status: t.transactionStatus,
-        }));
+        const formattedTransactions = transactionsResponse.data.map(
+            formatTransaction
+        );
 
         setTransactions(formattedTransactions);
 
@@ -152,16 +166,32 @@ function Dashboard() {
 
     return (
         <div className="dashboard-layout">
+
+            {/* Sidebar */}
             <aside className="dashboard-sidebar">
                 <h2 className="brand">PayGuard AI</h2>
 
                 <p className="sidebar-label">MAIN MENU</p>
 
-                <a className="sidebar-link active" href="#overview">Overview</a>
-                <a className="sidebar-link" href="#transactions">Transactions</a>
-                <a className="sidebar-link" href="#analytics">Analytics</a>
-                <a className="sidebar-link" href="#fraud">Fraud Detection</a>
-                <a className="sidebar-link" href="#copilot">AI Copilot</a>
+                <a className="sidebar-link active" href="#overview">
+                    Overview
+                </a>
+
+                <a className="sidebar-link" href="#transactions">
+                    Transactions
+                </a>
+
+                <a className="sidebar-link" href="#analytics">
+                    Analytics
+                </a>
+
+                <a className="sidebar-link" href="#fraud">
+                    Fraud Detection
+                </a>
+
+                <a className="sidebar-link" href="#copilot">
+                    AI Copilot
+                </a>
 
                 <div className="sidebar-bottom">
                     <p>Personal Finance</p>
@@ -169,7 +199,10 @@ function Dashboard() {
                 </div>
             </aside>
 
+            {/* Main Dashboard */}
             <main className="dashboard-main">
+
+                {/* Top Navigation */}
                 <header className="dashboard-topbar">
                     <div>
                         <h2>Overview</h2>
@@ -189,51 +222,61 @@ function Dashboard() {
                     </div>
                 </header>
 
+                {/* Welcome Section */}
                 <section className="welcome-section" id="overview">
                     <h1>Welcome to PayGuard AI</h1>
-                    <p>Here's an overview of your financial activity.</p>
+
+                    <p>
+                        Here's an overview of your financial activity.
+                    </p>
                 </section>
 
-                <section className="summary-grid">
-                    <div className="summary-card">
-                        <p>Total Balance</p>
-                        <h2>₹{balance.toLocaleString("en-IN")}</h2>
-                        <span>Income minus expenses</span>
-                    </div>
+                {/* Financial Summary Cards */}
+                <FinancialSummary
+                    totalBalance={balance}
+                    totalIncome={totalIncome}
+                    totalExpenses={totalExpenses}
+                    totalTransactions={transactions.length}
+                />
 
-                    <div className="summary-card">
-                        <p>Total Income</p>
-                        <h2 className="income-text">
-                            ₹{totalIncome.toLocaleString("en-IN")}
-                        </h2>
-                        <span>Total recorded income</span>
-                    </div>
+                {/* Financial Analytics */}
+                    <section className="financial-analytics-grid" id="analytics">
 
-                    <div className="summary-card">
-                        <p>Total Expenses</p>
-                        <h2 className="expense-text">
-                            ₹{totalExpenses.toLocaleString("en-IN")}
-                        </h2>
-                        <span>Total recorded expenses</span>
-                    </div>
+                        <IncomeExpenseChart
+                            transactions={transactions}
+                            isLoading={isLoading}
+                        />
 
-                    <div className="summary-card">
-                        <p>Transactions</p>
-                        <h2>{transactions.length}</h2>
-                        <span>Total recorded</span>
-                    </div>
-                </section>
+                        <ExpenseCategoryChart
+                            transactions={transactions}
+                            isLoading={isLoading}
+                        />
 
+                    </section>
+                    {/* Monthly Financial Trends */}
+                        <MonthlyTrendChart
+                            transactions={transactions}
+                            isLoading={isLoading}
+                        />
+
+                {/* Transaction Management */}
                 <section className="transaction-workspace">
+
                     <div className="workspace-card">
-                        <TransactionForm onAddTransaction={addTransaction} />
+                        <TransactionForm
+                            onAddTransaction={addTransaction}
+                        />
                     </div>
 
                     <div className="workspace-card">
-                        <ImportTransactions onUpload={uploadTransactions} />
+                        <ImportTransactions
+                            onUpload={uploadTransactions}
+                        />
                     </div>
+
                 </section>
 
+                {/* Transaction List */}
                 <section
                     className="workspace-card transaction-list-card"
                     id="transactions"
@@ -246,6 +289,7 @@ function Dashboard() {
                         error={error}
                     />
                 </section>
+
             </main>
         </div>
     );

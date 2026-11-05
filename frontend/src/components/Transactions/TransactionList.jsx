@@ -119,6 +119,9 @@ function TransactionList({
                         <tr>
                             <th>Description</th>
                             <th>Category</th>
+                            <th>Merchant</th>
+                            <th>Receiver</th>
+                            <th>Payment Method</th>
                             <th>Date</th>
                             <th>Type</th>
                             <th>Status</th>
@@ -130,19 +133,19 @@ function TransactionList({
                     <tbody>
                         {isLoading ? (
                             <tr>
-                                <td colSpan="7" className="table-message">
+                                <td colSpan="10" className="table-message">
                                     Loading transactions...
                                 </td>
                             </tr>
                         ) : error ? (
                             <tr>
-                                <td colSpan="7" className="table-message error-text">
+                                <td colSpan="10" className="table-message error-text">
                                     {error}
                                 </td>
                             </tr>
                         ) : filteredTransactions.length === 0 ? (
                             <tr>
-                                <td colSpan="7" className="table-message">
+                                <td colSpan="10" className="table-message">
                                     No transactions found. Add a transaction to get started.
                                 </td>
                             </tr>
@@ -151,6 +154,9 @@ function TransactionList({
                                 <tr key={transaction.id}>
                                     <td>{transaction.description}</td>
                                     <td>{transaction.category}</td>
+                                    <td>{transaction.merchant || "—"}</td>
+                                    <td>{transaction.receiver || "—"}</td>
+                                    <td>{transaction.paymentMethod || "—"}</td>
                                     <td>{transaction.date}</td>
                                     <td>
                                         <span className={
@@ -203,6 +209,9 @@ function TransactionList({
 
                         <p><strong>Description:</strong> {selectedTransaction.description}</p>
                         <p><strong>Category:</strong> {selectedTransaction.category}</p>
+                        <p><strong>Merchant:</strong> {selectedTransaction.merchant || "—"}</p>
+                        <p><strong>Receiver:</strong> {selectedTransaction.receiver || "—"}</p>
+                        <p><strong>Payment Method:</strong> {selectedTransaction.paymentMethod || "—"}</p>
                         <p><strong>Type:</strong> {selectedTransaction.type}</p>
                         <p><strong>Status:</strong> {selectedTransaction.status || "Success"}</p>
                         <p><strong>Amount:</strong> ₹{selectedTransaction.amount}</p>
@@ -265,6 +274,50 @@ function TransactionList({
                                 }
                                 required
                             />
+
+                            <label>Merchant</label>
+                            <input
+                                className="input"
+                                value={editingTransaction.merchant || ""}
+                                onChange={(e) =>
+                                    setEditingTransaction({
+                                        ...editingTransaction,
+                                        merchant: e.target.value,
+                                    })
+                                }
+                            />
+
+                            <label>Receiver</label>
+                            <input
+                                className="input"
+                                value={editingTransaction.receiver || ""}
+                                onChange={(e) =>
+                                    setEditingTransaction({
+                                        ...editingTransaction,
+                                        receiver: e.target.value,
+                                    })
+                                }
+                            />
+
+                            <label>Payment Method</label>
+                            <select
+                                className="select"
+                                value={editingTransaction.paymentMethod || "UPI"}
+                                onChange={(e) =>
+                                    setEditingTransaction({
+                                        ...editingTransaction,
+                                        paymentMethod: e.target.value,
+                                    })
+                                }
+                            >
+                                <option value="UPI">UPI</option>
+                                <option value="Credit Card">Credit Card</option>
+                                <option value="Debit Card">Debit Card</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                                <option value="Net Banking">Net Banking</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Wallet">Wallet</option>
+                            </select>
 
                             <label>Date</label>
                             <input

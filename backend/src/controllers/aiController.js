@@ -43,6 +43,9 @@ const processCopilotQuery = async(req,res)=>{
 
         // Generate AI Response
         const url = process.env.AI_SERVICE_URL;//write the url that ai-service exposes in .env file of backend folder
+        if (!url) {
+            throw new Error("AI_SERVICE_URL is not configured.");
+        }
         const response = await axios.post(
             url,
             {
@@ -53,7 +56,14 @@ const processCopilotQuery = async(req,res)=>{
                 timeout: 35000
             }
         );
-        const answer = response.data.answer;
+        const answer = response.data?.answer;
+
+        if (typeof answer !== "string" || !answer.trim()) {
+            return res.status(502).json({
+                success: false,
+                message: "AI service returned an invalid response."
+            });
+        }
 
         return res.status(200).json({
             success: true,

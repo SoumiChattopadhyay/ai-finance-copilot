@@ -1,6 +1,6 @@
 const Transaction = require("../models/Transaction");
 const axios = require("axios");
-require(".env").configure();
+require("dotenv").configure();
 
 const processCopilotQuery = async(req,res)=>{
     try{

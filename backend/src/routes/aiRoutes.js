@@ -1,7 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/authMiddleware");
-console.log("TEST ROUTES LOADED");
+const {processCopilotQuery} = require("../controllers/aiController");
+
+// AI Copilot endpoint
+router.post("/", verifyToken, processCopilotQuery);
+
+// Authentication test
 router.post("/test", verifyToken, (req, res) => {
     return res.status(200).json({
         success: true,

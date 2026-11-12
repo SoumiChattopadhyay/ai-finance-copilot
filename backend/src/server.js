@@ -26,8 +26,8 @@ app.use(
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/ai",aiRoutes);
 app.use("/api/transactions", transactionRoutes);
+app.use("/api/copilot",aiRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
